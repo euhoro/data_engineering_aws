@@ -1,0 +1,9 @@
+boto3
+jupyterlab
+pandas
+##################
+ipython-sql
+sqlalchemy
+psycopg2-binary
+pymysql
+
