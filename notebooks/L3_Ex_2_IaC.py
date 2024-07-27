@@ -10,7 +10,7 @@
 import pandas as pd
 import boto3
 import json
-
+import redshift_connector
 
 # ## STEP 0: (Prerequisite) Save the AWS Access key
 # 
@@ -223,7 +223,7 @@ except Exception as e:
 
 
 def prettyRedshiftProps(props):
-    pd.set_option('display.max_colwidth', -1)
+    #pd.set_option('display.max_colwidth', -1)
     keysToShow = ["ClusterIdentifier", "NodeType", "ClusterStatus", "MasterUsername", "DBName", "Endpoint", "NumberOfNodes", 'VpcId']
     x = [(k, v) for k,v in props.items() if k in keysToShow]
     return pd.DataFrame(data=x, columns=["Key", "Value"])
@@ -271,7 +271,7 @@ except Exception as e:
 # In[60]:
 
 
-get_ipython().run_line_magic('load_ext', 'sql')
+#get_ipython().run_line_magic('load_ext', 'sql')
 
 
 # In[61]:
@@ -279,7 +279,28 @@ get_ipython().run_line_magic('load_ext', 'sql')
 
 conn_string="postgresql://{}:{}@{}:{}/{}".format(DWH_DB_USER, DWH_DB_PASSWORD, DWH_ENDPOINT, DWH_PORT,DWH_DB)
 print(conn_string)
-get_ipython().run_line_magic('sql', '$conn_string')
+#get_ipython().run_line_magic('sql', '$conn_string')
+
+import redshift_connector
+conn = redshift_connector.connect(
+     host=DWH_ENDPOINT,
+     database=DWH_DB,
+     port=int(DWH_PORT),
+     user=DWH_DB_USER,
+     password=DWH_DB_PASSWORD
+  )
+
+#### sqlalchemy instead of jupyter 
+
+from sqlalchemy import create_engine
+
+# Create SQLAlchemy engine with connect_args to avoid unsupported parameter settings
+engine = create_engine(conn_string)#, connect_args={'options': '-c standard_conforming_strings=off'})
+
+# Verify the connection by executing a simple query
+with engine.connect() as connection:
+    result = connection.execute("SELECT current_date;")
+    print(result.fetchone())
 
 
 # # STEP 5: Clean up your resources
