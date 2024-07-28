@@ -34,21 +34,6 @@ This project includes three main components:
 
 ```mermaid
 graph LR
-graph TD
-    A[Start ETL Process] --> B[Cluster Up]
-    B --> C[Create DWH Schema]
-    C --> D[Load Staging Tables]
-    D --> E[Insert Data into Final Tables]
-    E --> F[Cluster Down]
-    F --> G[ETL Process Completed]
-
-```
-
-
-### ETL Pipeline
-
-```mermaid
-graph LR
     S3[User Logs and Metadata on S3 bucket]
     S3 -->|Load| StagingTables[Staging Tables on Redshift]
     StagingTables -->|Transform and Load| FactTable[Fact Table: songplay]
