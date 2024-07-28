@@ -16,14 +16,11 @@ def create_tables(cur, conn):
 
 
 def main():
+    create_dwh_schema()
+
+def create_dwh_schema():
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
-
-    # host = aaa
-    # db_name = dwh
-    # db_user = a
-    # db_password = p
-    # db_port = 5439
     conn_str = f"""host={config['CLUSTER']['host']} dbname={config['CLUSTER']['db_name']} user={config['CLUSTER']['db_user']} password={config['CLUSTER']['db_password']}  port={config['CLUSTER']['db_port']}"""
     conn = psycopg2.connect(conn_str)
     cur = conn.cursor()

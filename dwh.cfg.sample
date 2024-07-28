@@ -1,7 +1,7 @@
 [AWS]
 key = 
 secret = 
-REGION = us-east-1
+region = us-east-1
 
 [DWH]
 dwh_cluster_type = multi-node
