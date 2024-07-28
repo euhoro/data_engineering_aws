@@ -82,6 +82,8 @@ config.read_file(open('dwh.cfg'))
 
 KEY                    = config.get('AWS','KEY')
 SECRET                 = config.get('AWS','SECRET')
+REGION                 = config.get('AWS','REGION')
+#REGION                 = 'us-west-2'
 
 DWH_CLUSTER_TYPE       = config.get("DWH","DWH_CLUSTER_TYPE")
 DWH_NUM_NODES          = config.get("DWH","DWH_NUM_NODES")
@@ -108,7 +110,7 @@ pd.DataFrame({"Param":
 # 
 # To interact with EC2 and S3, utilize `boto3.resource`; for IAM and Redshift, use `boto3.client`. If you require additional details on boto3, refer to the [boto3 documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html).
 # 
-# **Note**: We create clients and resources in the **us-west-2** region. Choose the same region in your AWS Web Console to see these resources.
+# **Note**: We create clients and resources in the **us-east-1** region. Choose the same region in your AWS Web Console to see these resources.
 
 # In[35]:
 
@@ -116,24 +118,24 @@ pd.DataFrame({"Param":
 import boto3
 
 ec2 = boto3.resource('ec2',
-                       region_name="us-west-2",
+                       region_name=REGION,
                        aws_access_key_id=KEY,
                        aws_secret_access_key=SECRET
                     )
 
 s3 = boto3.resource('s3',
-                       region_name="us-west-2",
+                       region_name=REGION,
                        aws_access_key_id=KEY,
                        aws_secret_access_key=SECRET
                    )
 
 iam = boto3.client('iam',aws_access_key_id=KEY,
                      aws_secret_access_key=SECRET,
-                     region_name='us-west-2'
+                     region_name=REGION
                   )
 
 redshift = boto3.client('redshift',
-                       region_name="us-west-2",
+                       region_name=REGION,
                        aws_access_key_id=KEY,
                        aws_secret_access_key=SECRET
                        )
@@ -234,7 +236,7 @@ prettyRedshiftProps(myClusterProps)
 
 # <h2> 2.2 Take note of the cluster <font color='red'> endpoint and role ARN </font> </h2>
 
-# <font color='red'>DO NOT RUN THIS unless the cluster status becomes "Available". Make ure you are checking your Amazon Redshift cluster in the **us-west-2** region. </font>
+# <font color='red'>DO NOT RUN THIS unless the cluster status becomes "Available". Make ure you are checking your Amazon Redshift cluster in the **us-east-1** region. </font>
 # 
 
 # In[58]:

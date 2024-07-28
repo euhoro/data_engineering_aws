@@ -1,6 +1,8 @@
 [AWS]
 key = 
 secret = 
+REGION = us-east-1
+
 [DWH]
 dwh_cluster_type = multi-node
 dwh_num_nodes = 4
@@ -20,6 +22,10 @@ db_password = Passw0rd
 db_port = 5439
 
 [IAM_ROLE]
-arm = 
 arn = arn:aws:iam::010438509174:role/dwhRole
+
+[S3]
+LOG_DATA='s3://udacity-dend/log_data'
+LOG_JSON_PATH='s3://udacity-dend/log_json_path.json'
+SONG_DATA='s3://udacity-dend/song_data'
 

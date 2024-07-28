@@ -1,11 +1,42 @@
-how_to_run:
+Amazon Redshift Architecture
+A music streaming startup, Sparkify, has grown their user base and song database and want to move their processes and data onto the cloud. Their data resides in S3, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in their app.
+
+As their data engineer, you are tasked with building an ETL pipeline that extracts their data from S3, stages them in Redshift, and transforms data into a set of dimensional tables for their analytics team to continue finding insights into what songs their users are listening to.
+
+base region - us-east-1
+Song data: s3://udacity-dend/song_data
+Log data: s3://udacity-dend/log_data
+To properly read log data s3://udacity-dend/log_data, you'll need the following metadata file:
+
+Log metadata: s3://udacity-dend/log_json_path.json
+Keep in mind that the udacity-dend bucket is situated in the us-west-2 region. If you're copying the dataset to Redshift located in us-east-1, remember to specify the region using the REGION keyword in the COPY command.
+
+
+
+Based on : 
+How to ETL with Redshift
+
+How to ingest data into Redshift using S3 buckets
+
+Parallel ETL
+
+Optimizing Table Design using Distribution Styles
+
+
+how_to_run_previous_lessons
+
 mac m1 + visual studio code 
-virtual_env with requirements.txt
-actiate virtual_env 
-jupyter lab 
-copy link - http://localhost:8888/lab?token=c4b40b6a77369eb149c9af4ccc3f61f36ba4270043171d45
-run notebooks 
- ex_2 - ioc 
+virtual_env with requirements.txt -     pip install -r requirements.txt
+actiate virtual_env --                  source venv/bin/activate
+start jupyter --                        jupyter lab 
+copy link -                             http://localhost:8888/lab?token=
+run notebooks while connected in visual studio code 
+ ex_2 - ioc - untill create cluster + save config
  ex_3 - parallel elt
+ ex_4 - table design
+
+ ex_2 - ioc - cleanup + delete cluster
+
+ 
 
 todos: teraform ioc
