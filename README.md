@@ -30,6 +30,18 @@ This project includes three main components:
    - **File**: `dwh.cfg.sample`
    - **Description**: Configuration file that contains AWS credentials and Redshift cluster information.it should be renamed to dwh.cfg
 
+### ETL Code
+
+```mermaid
+graph LR
+    A[Start ETL Process] --> B[Cluster Up]
+    B --> C[Create DWH Schema]
+    C --> D[Load Staging Tables]
+    D --> E[Insert Data into Final Tables]
+    E --> F[Cluster Down]
+    F --> G[ETL Process Completed]
+```
+
 ### ETL Pipeline
 
 ```mermaid
