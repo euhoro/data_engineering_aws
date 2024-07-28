@@ -41,9 +41,12 @@ run notebooks while connected in visual studio code
  https://stackoverflow.com/questions/76532906/unrecognized-configuration-parameter-standard-conforming-strings-while-queryin
 
 todos:
+done:
 ❌ In the songplays table, insert only data whose page is NextSong.
 ❌ Handle duplicates in your INSERT queries.
 ❌ Docstring documentation is needed in your code.
+
+not done !!! 
 
 check sphinx https://www.youtube.com/watch?v=BWIrhgCAae0
 teraform ioc ?
