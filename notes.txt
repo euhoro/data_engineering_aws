@@ -40,4 +40,8 @@ run notebooks while connected in visual studio code
  issues :
  https://stackoverflow.com/questions/76532906/unrecognized-configuration-parameter-standard-conforming-strings-while-queryin
 
-todos: teraform ioc
+todos:
+
+teraform ioc
+Add data quality checks
+Create a dashboard for analytic queries on your new database
