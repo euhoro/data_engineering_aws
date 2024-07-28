@@ -1,6 +1,5 @@
 import configparser
 
-
 # CONFIG
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
@@ -21,7 +20,7 @@ song_table_drop = "DROP TABLE IF EXISTS songs"
 artist_table_drop = "DROP TABLE IF EXISTS artists"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
-# CREATE TABLESsa
+# CREATE TABLES
 staging_events_table_create= ("""
     CREATE TABLE IF NOT EXISTS staging_events(
     artist VARCHAR,
@@ -58,9 +57,6 @@ staging_songs_table_create = ("""
         year INTEGER);
 """)
 
-#songplay_id SERIAL PRIMARY KEY,
-#songplay_id INTEGER NOT NULL PRIMARY KEY,
-#songplay_id INTEGER IDENTITY(1, 1) PRIMARY KEY,
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplay (
     songplay_id INTEGER IDENTITY(1, 1) PRIMARY KEY,
@@ -145,7 +141,7 @@ INSERT INTO songplay (
     location,
     user_agent
 )
-SELECT
+SELECT DISTINCT
     timestamp 'epoch' + se.ts/1000 * interval '1 second',
     se.userId,
     se.level,
@@ -153,27 +149,55 @@ SELECT
     ss.artist_id,
     se.sessionId,
     se.location,
-    se.userAgent
+    se.userAgent 
 FROM staging_events se
-JOIN staging_songs ss ON (se.artist = ss.artist_name AND se.song = ss.title);
+JOIN staging_songs ss ON (se.artist = ss.artist_name AND se.song = ss.title)
+WHERE se.page = 'NextSong';
 """)
 
 user_table_insert = ("""
-    INSERT INTO users (
-        user_id,
-        first_name,
-        last_name,
-        gender,
-        level)
-        
+INSERT INTO users (
+    user_id,
+    first_name,
+    last_name,
+    gender,
+    level)
+SELECT DISTINCT
+    user_id,
+    first_name,
+    last_name,
+    gender,
+    level
+FROM (
     SELECT
-        se.userId,
-        se.firstName,
-        se.lastName,
-        se.gender,
-            se.level
+        se.userId AS user_id,
+        se.firstName AS first_name,
+        se.lastName AS last_name,
+        se.gender AS gender,
+        se.level AS level,
+        ROW_NUMBER() OVER (PARTITION BY se.userId ORDER BY se.ts DESC) AS rnk
     FROM staging_events se
+    WHERE se.userId IS NOT NULL
+) subquery
+WHERE rnk = 1;
 """)
+
+# user_table_insert = ("""
+#     INSERT INTO users (
+#         user_id,
+#         first_name,
+#         last_name,
+#         gender,
+#         level)
+#     SELECT DISTINCT
+#         se.userId,
+#         se.firstName,
+#         se.lastName,
+#         se.gender,
+#         se.level
+#     FROM staging_events se
+#     WHERE se.userId IS NOT NULL;
+# """)
 
 song_table_insert = ("""
     INSERT INTO songs (
@@ -181,11 +205,10 @@ song_table_insert = ("""
     title,
     artist_id,
     year,
-    duration
-)
-SELECT
+    duration)
+SELECT DISTINCT
     ss.song_id,
-    ss.title,     -- Corrected column name
+    ss.title,
     ss.artist_id,
     ss.year,
     ss.duration
@@ -198,17 +221,41 @@ INSERT INTO artists (
     name,
     location,
     latitude,
+    longitude)
+SELECT DISTINCT
+    artist_id,
+    name,
+    location,
+    latitude,
     longitude
-)
-SELECT
-    ss.artist_id,
-    ss.artist_name,
-    ss.artist_location,
-    CAST(ss.artist_latitude AS double precision),
-    CAST(ss.artist_longitude AS double precision)
-FROM staging_songs ss;
-
+FROM (
+    SELECT
+        ss.artist_id,
+        ss.artist_name AS name,
+        ss.artist_location AS location,
+        CAST(ss.artist_latitude AS double precision) AS latitude,
+        CAST(ss.artist_longitude AS double precision) AS longitude,
+        ROW_NUMBER() OVER (PARTITION BY ss.artist_id ORDER BY ss.year DESC) AS rnk
+    FROM staging_songs ss
+) subquery
+WHERE rnk = 1;
 """)
+
+# artist_table_insert = ("""
+# INSERT INTO artists (
+#     artist_id,
+#     name,
+#     location,
+#     latitude,
+#     longitude)
+# SELECT DISTINCT
+#     ss.artist_id,
+#     ss.artist_name,
+#     ss.artist_location,
+#     CAST(ss.artist_latitude AS double precision),
+#     CAST(ss.artist_longitude AS double precision)
+# FROM staging_songs ss;
+# """)
 
 time_table_insert = ("""
 INSERT INTO time (
@@ -218,23 +265,58 @@ INSERT INTO time (
     week,
     month,
     year,
-    weekday
-)
-SELECT
+    weekday)
+SELECT DISTINCT
     start_time,
     EXTRACT(HOUR FROM start_time),
     EXTRACT(DAY FROM start_time),
     EXTRACT(WEEK FROM start_time),
     EXTRACT(MONTH FROM start_time),
     EXTRACT(YEAR FROM start_time),
-    EXTRACT(DOW FROM start_time)  -- Use DOW (Day of Week) instead of WEEKDAY
+    EXTRACT(DOW FROM start_time)
 FROM songplay;
 """)
+
+# DATA INTEGRITY CHECKS
+check_duplicates_songplay = """
+SELECT songplay_id, COUNT(*)
+FROM songplay
+GROUP BY songplay_id
+HAVING COUNT(*) > 1;
+"""
+
+check_duplicates_users = """
+SELECT user_id, COUNT(*)
+FROM users
+GROUP BY user_id
+HAVING COUNT(*) > 1;
+"""
+
+check_duplicates_songs = """
+SELECT song_id, COUNT(*)
+FROM songs
+GROUP BY song_id
+HAVING COUNT(*) > 1;
+"""
+
+check_duplicates_artists = """
+SELECT artist_id, COUNT(*)
+FROM artists
+GROUP BY artist_id
+HAVING COUNT(*) > 1;
+"""
+
+check_duplicates_time = """
+SELECT start_time, COUNT(*)
+FROM time
+GROUP BY start_time
+HAVING COUNT(*) > 1;
+"""
 
 # QUERY LISTS
 
 create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
-#insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
-insert_table_queries = [ time_table_insert]
+insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
+check_duplicates_queries = [check_duplicates_songplay, check_duplicates_users, check_duplicates_songs, check_duplicates_artists, check_duplicates_time]

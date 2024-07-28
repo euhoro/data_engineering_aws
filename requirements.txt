@@ -10,3 +10,5 @@ PyMySQL==1.1.1
 redshift_connector==2.1.2
 sqlalchemy-redshift==0.8.14
 matplotlib==3.9.1
+sphinx==7.4.7
+#sphinx_rtd_theme
