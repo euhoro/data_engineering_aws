@@ -1,3 +1,30 @@
+This is the project no 2 from a short nano degree at udacity :  
+
+
+1. **Data Modeling with Apache Cassandra** ( to be added ) 
+   - Create a non-relational database for a music streaming app.
+   - Define queries and tables using Apache Cassandra.
+
+2. **Data Warehouse**  ( current ) 
+   - Build an ELT pipeline for a streaming music service.
+   - Extract data from S3, stage in Redshift, and transform into dimensional tables.
+
+3. **Data Lakehouse with AWS** https://github.com/euhoro/data_engineering_aws_glue
+   - Develop a data lakehouse solution for sensor data.
+   - Use Spark and AWS Glue for processing and analytics.
+
+4. **Automate Data Pipelines** https://github.com/euhoro/data_engineering_aws_airflow
+   - Create and manage data pipelines using Apache Airflow.
+   - Implement data validation, DAGs, and data quality concepts.
+   - Extend Airflow with plugins and refactor DAGs for production.
+
+## Certificate
+<p align="center">
+  <img src="certificate.jpg" width="500" height="400">
+</p>
+
+
+
 # Sparkify DE Project
 
 ### Introduction
