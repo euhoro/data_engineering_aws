@@ -20,10 +20,10 @@ This is the project no 2 from a short nano degree at udacity :
 
 ## Certificate
 <p align="center">
-  <img src="certificate.jpg" width="500" height="400">
+  <img src="certificate.png" width="500" height="400">
 </p>
 
-
+( for a more details and contents - https://github.com/orlevit/Data_Engineering_with_AWS ) 
 
 # Sparkify DE Project
 
